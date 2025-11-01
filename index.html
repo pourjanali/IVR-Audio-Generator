@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد صوتی IVR</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vazirmatn Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        /* Simple loading spinner animation */
+        .loader {
+            border: 4px solid #f3f3f3;
+            /* Light grey */
+            border-top: 4px solid #3498db;
+            /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-lg">
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">مولد صوتی IVR</h1>
+
+        <!-- Script Text Area -->
+        <div class="mb-6">
+            <label for="scriptText" class="block text-sm font-medium text-gray-700 mb-2">متن اسکریپت (قابل
+                ویرایش):</label>
+            <textarea id="scriptText" rows="7"
+                class="w-full p-3 border border-gray-300 rounded-lg text-gray-700 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="متن خود را اینجا وارد کنید...">سلام! به سامانه گویای ما خوش آمدید.</textarea>
+        </div>
+
+        <!-- Voice Selection -->
+        <div class="mb-6">
+            <label for="voiceSelect" class="block text-sm font-medium text-gray-700 mb-2">انتخاب صدا:</label>
+            <select id="voiceSelect"
+                class="w-full p-3 border border-gray-300 rounded-lg text-gray-700 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="Aoede">صدای ۱ (زن - واضح و روان)</option>
+                <option value="Autonoe">صدای ۲ (زن - روشن و دوستانه)</option>
+                <option value="Callirrhoe">صدای ۳ (زن - آرام و خودمانی)</option>
+                <option value="Despina">صدای ۴ (زن - نرم و روان)</option>
+                <option value="Vindemiatrix">صدای ۵ (زن - ملایم)</option>
+                <option value="Leda">صدای ۶ (زن - جوان)</option>
+                <option value="Enceladus">صدای ۷ (زن - نفس‌دار)</option>
+                <option value="Erinome">صدای ۸ (زن - شفاف)</option>
+                <option value="Sulafat">صدای ۹ (زن - گرم)</option>
+                <option value="Sadachbia">صدای ۱۰ (زن - سرزنده)</option>
+                <option value="Kore">صدای ۱۱ (زن - قاطع)</option>
+                <option value="Zephyr">صدای ۱۲ (زن - شفاف)</option>
+                <option value="Charon">صدای ۱۳ (زن - آموزنده)</option>
+                <option value="Iapetus">صدای ۱۴ (زن - شفاف)</option>
+                <option value="Umbriel">صدای ۱۵ (زن - آرام)</option>
+                <option value="Algieba">صدای ۱۶ (زن - روان)</option>
+                <option value="Laomedeia">صدای ۱۷ (زن - شاد)</option>
+                <option value="Achernar">صدای ۱۸ (زن - نرم)</option>
+                <option value="Alnilam">صدای ۱۹ (زن - قاطع)</option>
+                <option value="Schedar">صدای ۲۰ (زن - یکنواخت)</option>
+                <option value="Gacrux">صدای ۲۱ (زن - بالغ)</option>
+                <option value="Pulcherrima">صدای ۲۲ (زن - پیشرو)</option>
+                <option value="Achird">صدای ۲۳ (زن - دوستانه)</option>
+                <option value="Zubenelgenubi">صدای ۲۴ (زن - خودمانی)</option>
+                <option value="Rasalgethi" selected>صدای ۲۵ (مرد - آموزشی)</option>
+                <option value="Puck">صدای ۲۶ (مرد - شاد و پرانرژی)</option>
+            </select>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button id="generateButton"
+                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 flex items-center justify-center shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                        clip-rule="evenodd" />
+                </svg>
+                پخش صدا
+            </button>
+            <a id="downloadButton" href="#" download="ivr_audio_8khz.wav"
+                class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition duration-300 flex items-center justify-center shadow-md"
+                style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                        clip-rule="evenodd" />
+                </svg>
+                دانلود صدا (8kHz)
+            </a>
+        </div>
+
+        <!-- Loader and Error Message -->
+        <div id="loadingIndicator" class="loader mx-auto my-4" style="display: none;"></div>
+        <div id="errorMessage" class="text-red-500 text-center my-4" style="display: none;"></div>
+
+        <!-- Audio Player -->
+        <audio id="audioPlayer" controls class="w-full mt-6" style="display: none;"></audio>
+
+        <!-- Download Format Note -->
+        <p id="downloadNote" class="text-xs text-gray-500 text-center mt-4" style="display: none;">
+            فایل دانلود .wav با فرمت PCM, 16-bit, 8000Hz (مناسب سیستم‌های تلفنی) ذخیره می‌شود.
+        </p>
+
+        <!-- Footer for GitHub -->
+        <div class="text-center text-xs text-gray-400 mt-6 pt-4 border-t border-gray-200">
+            <p>ابزار متن-باز. کد منبع را در گیت‌هاب مشاهده کنید.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        // --- START OF CONFIGURATION ---
+
+        /**
+         * -----------------------------------------------------------------
+         * |                    ! ! !  مهم  ! ! !                          |
+         * |                                                               |
+         * |   برای استفاده از این ابزار خارج از محیط Canvas (مثلا روی هاست شخصی) |
+         * |   شما باید کلید API خود را از Google AI Studio دریافت کنید     |
+         * |   و آن را در متغیر `USER_API_KEY` زیر قرار دهید.                  |
+         * |                                                               |
+         * -----------------------------------------------------------------
+         */
+        const USER_API_KEY = ""; // <-- کلید API خود را اینجا وارد کنید
+
+        // --- END OF CONFIGURATION ---
+
+
+        // DOM Elements
+        const generateButton = document.getElementById('generateButton');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const scriptText = document.getElementById('scriptText');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const errorMessage = document.getElementById('errorMessage');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const downloadButton = document.getElementById('downloadButton');
+        const downloadNote = document.getElementById('downloadNote');
+
+        // Determine API Key
+        // Use user-provided key, fallback to Canvas-injected key (if available)
+        const apiKey = USER_API_KEY || (typeof __GOOGLE_API_KEY__ !== 'undefined' ? __GOOGLE_API_KEY__ : "");
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+        let audioUrl = null; // To store the blob URL of the generated audio
+
+        /**
+         * Resets the audio player and download button when text or voice changes.
+         */
+        function resetAudio() {
+            if (audioUrl) {
+                URL.revokeObjectURL(audioUrl); // Free up memory
+                audioUrl = null;
+            }
+            audioPlayer.style.display = 'none';
+            audioPlayer.src = '';
+            downloadButton.style.display = 'none';
+            downloadButton.href = '#';
+            downloadNote.style.display = 'none';
+
+            // Reset button text to "Play"
+            generateButton.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+                پخش صدا
+            `;
+        }
+
+        // Add event listeners for text or voice changes
+        voiceSelect.addEventListener('change', resetAudio);
+        scriptText.addEventListener('input', resetAudio);
+
+        /**
+         * Main function to generate or play audio
+         */
+        generateButton.addEventListener('click', async () => {
+            // If audio is already generated, just play it
+            if (audioUrl) {
+                audioPlayer.play();
+                return;
+            }
+
+            // Check for API key
+            if (!apiKey) {
+                showError("کلید API یافت نشد. لطفا فایل index.html را ویرایش کرده و کلید خود را در متغیر USER_API_KEY قرار دهید.");
+                return;
+            }
+            
+            const text = scriptText.value;
+            if (!text.trim()) {
+                showError("متن اسکریپت خالی است.");
+                return;
+            }
+
+            setLoading(true);
+
+            const selectedVoice = voiceSelect.value;
+
+            // API Request Payload
+            const payload = {
+                contents: [{
+                    parts: [{ text: text }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltConfig: { voiceName: selectedVoice }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            try {
+                // Fetch API with exponential backoff
+                const response = await fetchWithBackoff(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+
+                const result = await response.json();
+
+                // Extract audio data
+                const part = result?.candidates?.[0]?.content?.parts?.[0];
+                const audioData = part?.inlineData?.data;
+                const mimeType = part?.inlineData?.mimeType;
+
+                if (audioData && mimeType && mimeType.startsWith("audio/L16")) {
+                    const sampleRateMatch = mimeType.match(/rate=(\d+)/);
+                    if (!sampleRateMatch) {
+                        throw new Error("Sample rate not found in mimeType.");
+                    }
+                    const originalSampleRate = parseInt(sampleRateMatch[1], 10);
+                    const targetSampleRate = 8000; // Target sample rate for IVR/Asterisk
+
+                    const pcmData = base64ToArrayBuffer(audioData);
+                    const pcm16 = new Int16Array(pcmData);
+
+                    // Downsample the PCM data
+                    const downsampledPCM = downsamplePCM(pcm16, originalSampleRate, targetSampleRate);
+
+                    // Convert the downsampled PCM data to a WAV blob
+                    const wavBlob = pcmToWav(downsampledPCM, targetSampleRate);
+
+                    audioUrl = URL.createObjectURL(wavBlob); // Store the URL
+                    audioPlayer.src = audioUrl;
+                    downloadButton.href = audioUrl; // Set download link
+
+                    // Show player and buttons
+                    audioPlayer.style.display = 'block';
+                    downloadButton.style.display = 'flex';
+                    downloadNote.style.display = 'block';
+                    audioPlayer.play(); // Autoplay
+
+                    // Update button text to "Replay"
+                    generateButton.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        پخش مجدد
+                    `;
+
+                } else {
+                    throw new Error("No valid audio data found in the response.");
+                }
+
+            } catch (error) {
+                console.error("Error generating TTS:", error);
+                showError("خطا در تولید صدا. لطفا دوباره تلاش کنید.");
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        /**
+         * Shows or hides the loading indicator and disables/enables the button.
+         * @param {boolean} isLoading - True to show loader, false to hide.
+         */
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loadingIndicator.style.display = 'block';
+                errorMessage.style.display = 'none';
+                generateButton.disabled = true;
+                generateButton.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                loadingIndicator.style.display = 'none';
+                generateButton.disabled = false;
+                generateButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        /**
+         * Displays an error message to the user.
+         * @param {string} message - The error message to display.
+         */
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        /**
+         * Downsamples PCM data using nearest-neighbor interpolation.
+         * @param {Int16Array} pcmData - The original PCM data.
+         * @param {number} originalSampleRate - The original sample rate (e.g., 24000).
+         * @param {number} targetSampleRate - The target sample rate (e.g., 8000).
+         * @returns {Int16Array} The downsampled PCM data.
+         */
+        function downsamplePCM(pcmData, originalSampleRate, targetSampleRate) {
+            if (originalSampleRate === targetSampleRate) {
+                return pcmData;
+            }
+
+            const ratio = originalSampleRate / targetSampleRate;
+            const newLength = Math.floor(pcmData.length / ratio);
+            const downsampledData = new Int16Array(newLength);
+
+            for (let i = 0; i < newLength; i++) {
+                downsampledData[i] = pcmData[Math.floor(i * ratio)];
+            }
+
+            return downsampledData;
+        }
+
+        /**
+         * Fetches a resource with exponential backoff for retries (handles 429 errors).
+         * @param {string} url - The URL to fetch.
+         * @param {object} options - The fetch options.
+         * @param {number} [retries=3] - Number of retries left.
+         * @param {number} [delay=1000] - The delay in ms before retrying.
+         * @returns {Promise<Response>} The fetch response.
+         */
+        async function fetchWithBackoff(url, options, retries = 3, delay = 1000) {
+            try {
+                const response = await fetch(url, options);
+                // Retry on rate limiting
+                if (!response.ok && response.status === 429 && retries > 0) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchWithBackoff(url, options, retries - 1, delay * 2);
+                }
+                return response;
+            } catch (error) {
+                // Retry on network errors
+                if (retries > 0) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    return fetchWithBackoff(url, options, retries - 1, delay * 2);
+                }
+                throw error;
+            }
+        }
+
+        /**
+         * Converts a Base64 string to an ArrayBuffer.
+         * @param {string} base64 - The Base64 encoded string.
+         * @returns {ArrayBuffer} The resulting ArrayBuffer.
+         */
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        /**
+         * Converts raw PCM data into a WAV file (Blob).
+         * @param {Int16Array} pcmData - The raw PCM data.
+         * @param {number} sampleRate - The sample rate of the PCM data.
+         * @returns {Blob} A Blob object representing the WAV file.
+         */
+        function pcmToWav(pcmData, sampleRate) {
+            const numChannels = 1;
+            const bitsPerSample = 16;
+            const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+            const blockAlign = numChannels * (bitsPerSample / 8);
+            const dataSize = pcmData.length * (bitsPerSample / 8);
+            const fileSize = 36 + dataSize; // 44 - 8 (data header size)
+
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+
+            // RIFF header
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, fileSize, true);
+            writeString(view, 8, 'WAVE');
+
+            // 'fmt ' chunk
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true); // Subchunk1Size
+            view.setUint16(20, 1, true); // AudioFormat (1 = PCM)
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, byteRate, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, bitsPerSample, true);
+
+            // 'data' chunk
+            writeString(view, 36, 'data');
+            view.setUint32(40, dataSize, true);
+
+            // PCM data
+            let offset = 44;
+            for (let i = 0; i < pcmData.length; i++, offset += 2) {
+                view.setInt16(offset, pcmData[i], true);
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        /**
+         * Helper function to write a string to a DataView.
+         * @param {DataView} view - The DataView to write to.
+         * @param {number} offset - The offset to start writing at.
+         * @param {string} string - The string to write.
+         */
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+    </script>
+</body>
+
+</html>
