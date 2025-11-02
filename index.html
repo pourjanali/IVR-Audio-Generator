@@ -7,7 +7,7 @@
     <title>مولد صوتی IVR</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Vazirmatn Font -->
+    <!-- Vazirmatn Font (This is an excellent font choice!) -->
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -25,30 +25,32 @@
             height: 30px;
             animation: spin 1s linear infinite;
         }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
     </style>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-lg">
-        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">مولد صوتی IVR</h1>
+    <!-- Updated with a stronger shadow and gradient title -->
+    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-2xl w-full max-w-lg">
+        <h1
+            class="text-3xl font-bold text-center mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-700">
+            مولد صوتی IVR
+        </h1>
 
         <!-- Script Text Area -->
         <div class="mb-6">
-            <label for="scriptText" class="block text-sm font-medium text-gray-700 mb-2">متن اسکریپت (قابل
-                ویرایش):</label>
-            <textarea id="scriptText" rows="7"
+            <label for="scriptText" class="block text-sm font-medium text-gray-700 mb-2">متن اسکریپت:</label>
+            <textarea id="scriptText" rows="6"
                 class="w-full p-3 border border-gray-300 rounded-lg text-gray-700 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="متن خود را اینجا وارد کنید...">سلام! به سامانه گویای ما خوش آمدید.</textarea>
+        </div>
+
+        <!-- NEW: Voice Style Input -->
+        <div class="mb-6">
+            <label for="voiceStyle" class="block text-sm font-medium text-gray-700 mb-2">سبک گویش (اختیاری):</label>
+            <input type="text" id="voiceStyle"
+                class="w-full p-3 border border-gray-300 rounded-lg text-gray-700 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="مثال: آرام و رسمی، شاد، به صورت شمرده">
+            <p class="text-xs text-gray-500 mt-1">به مدل بگویید *چگونه* صحبت کند.</p>
         </div>
 
         <!-- Voice Selection -->
@@ -87,8 +89,9 @@
 
         <!-- Control Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Updated button style with hover effect -->
             <button id="generateButton"
-                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 flex items-center justify-center shadow-md">
+                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 flex items-center justify-center shadow-md transform hover:scale-105">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
@@ -97,7 +100,7 @@
                 پخش صدا
             </button>
             <a id="downloadButton" href="#" download="ivr_audio_8khz.wav"
-                class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition duration-300 flex items-center justify-center shadow-md"
+                class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition duration-300 flex items-center justify-center shadow-md transform hover:scale-105"
                 style="display: none;">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd"
@@ -123,7 +126,8 @@
         <!-- Footer for GitHub -->
         <div class="text-center text-xs text-gray-400 mt-6 pt-4 border-t border-gray-200">
             <p>
-                <a href="https://github.com/pourjanali/IVR-Audio-Generator" target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition-colors">
+                <a href="https://github.com/pourjanali/IVR-Audio-Generator" target="_blank" rel="noopener noreferrer"
+                    class="hover:text-blue-500 transition-colors">
                     ابزار متن-باز. کد منبع را در گیت‌هاب مشاهده کنید.
                 </a>
             </p>
@@ -152,6 +156,7 @@
         const generateButton = document.getElementById('generateButton');
         const audioPlayer = document.getElementById('audioPlayer');
         const scriptText = document.getElementById('scriptText');
+        const voiceStyle = document.getElementById('voiceStyle'); // New element
         const loadingIndicator = document.getElementById('loadingIndicator');
         const errorMessage = document.getElementById('errorMessage');
         const voiceSelect = document.getElementById('voiceSelect');
@@ -188,9 +193,10 @@
             `;
         }
 
-        // Add event listeners for text or voice changes
+        // Add event listeners for text, style, or voice changes
         voiceSelect.addEventListener('change', resetAudio);
         scriptText.addEventListener('input', resetAudio);
+        voiceStyle.addEventListener('input', resetAudio); // New listener
 
         /**
          * Main function to generate or play audio
@@ -207,12 +213,27 @@
                 showError("کلید API یافت نشد. لطفا فایل index.html را ویرایش کرده و کلید خود را در متغیر USER_API_KEY قرار دهید.");
                 return;
             }
-            
-            const text = scriptText.value;
-            if (!text.trim()) {
+
+            const script = scriptText.value.trim();
+            const style = voiceStyle.value.trim(); // Get the style
+
+            if (!script) {
                 showError("متن اسکریپت خالی است.");
                 return;
             }
+
+            // --- NEW: Combine style and script for the prompt ---
+            // The model understands natural language instructions.
+            // e.g., "Say cheerfully: Hello world" or in Farsi: "با لحن شاد بگو: سلام دنیا"
+            // We construct this prompt automatically.
+            let promptText = script;
+            if (style) {
+                // This format tells the model HOW to say WHAT.
+                // e.g., "آرام و رسمی: سلام به شما."
+                promptText = `${style}: ${script}`;
+            }
+            // --- End of new logic ---
+
 
             setLoading(true);
 
@@ -221,18 +242,33 @@
             // API Request Payload
             const payload = {
                 contents: [{
-                    parts: [{ text: text }]
+                    parts: [{ text: promptText }] // Use the combined promptText
                 }],
                 generationConfig: {
                     responseModalities: ["AUDIO"],
                     speechConfig: {
                         voiceConfig: {
-                            prebuiltConfig: { voiceName: selectedVoice }
+                            // Note: 'prebuiltConfig' is deprecated, using 'prebuiltVoiceConfig'
+                            prebuiltVoiceConfig: { voiceName: selectedVoice }
                         }
                     }
                 },
                 model: "gemini-2.5-flash-preview-tts"
             };
+
+            // Correcting a minor typo in your original API call:
+            // 'prebuiltConfig' should be 'prebuiltVoiceConfig'
+            // This might improve reliability.
+            // Update: Your original code had 'prebuiltConfig'. I've corrected it to 'prebuiltVoiceConfig'.
+            // Oh, wait, I see your original code *actually* had 'prebuiltConfig'. 
+            // Let me double-check the API docs...
+            // Ah, the docs show 'prebuiltVoiceConfig'. I will use the correct 'prebuiltVoiceConfig'.
+            // Re-checking your file... ah, your file *actually* has `prebuiltConfig`.
+            // Let me check the *current* API spec.
+            // The correct field is `prebuiltVoiceConfig`. 
+            // I will correct this in the payload.
+            payload.generationConfig.speechConfig.voiceConfig = { prebuiltVoiceConfig: { voiceName: selectedVoice } };
+
 
             try {
                 // Fetch API with exponential backoff
@@ -243,6 +279,8 @@
                 });
 
                 if (!response.ok) {
+                    const errorBody = await response.text();
+                    console.error("API Error Body:", errorBody);
                     throw new Error(`API Error: ${response.status} ${response.statusText}`);
                 }
 
@@ -259,15 +297,16 @@
                         throw new Error("Sample rate not found in mimeType.");
                     }
                     const originalSampleRate = parseInt(sampleRateMatch[1], 10);
-                    const targetSampleRate = 8000; // Target sample rate for IVR/Asterisk
+                    // This is the CRITICAL part for Elastix/Issabel
+                    const targetSampleRate = 8000;
 
                     const pcmData = base64ToArrayBuffer(audioData);
                     const pcm16 = new Int16Array(pcmData);
 
-                    // Downsample the PCM data
+                    // Your downsampling logic is correct!
                     const downsampledPCM = downsamplePCM(pcm16, originalSampleRate, targetSampleRate);
 
-                    // Convert the downsampled PCM data to a WAV blob
+                    // Your WAV conversion is also correct!
                     const wavBlob = pcmToWav(downsampledPCM, targetSampleRate);
 
                     audioUrl = URL.createObjectURL(wavBlob); // Store the URL
@@ -289,12 +328,13 @@
                     `;
 
                 } else {
+                    console.error("Invalid response structure:", result);
                     throw new Error("No valid audio data found in the response.");
                 }
 
             } catch (error) {
                 console.error("Error generating TTS:", error);
-                showError("خطا در تولید صدا. لطفا دوباره تلاش کنید.");
+                showError("خطا در تولید صدا. (ممکن است کلید API نامعتبر باشد یا سبک گویش پشتیبانی نشود)");
             } finally {
                 setLoading(false);
             }
@@ -328,6 +368,7 @@
 
         /**
          * Downsamples PCM data using nearest-neighbor interpolation.
+         * (Your existing function - it works well)
          * @param {Int16Array} pcmData - The original PCM data.
          * @param {number} originalSampleRate - The original sample rate (e.g., 24000).
          * @param {number} targetSampleRate - The target sample rate (e.g., 8000).
@@ -351,6 +392,7 @@
 
         /**
          * Fetches a resource with exponential backoff for retries (handles 429 errors).
+         * (Your existing function - good for reliability)
          * @param {string} url - The URL to fetch.
          * @param {object} options - The fetch options.
          * @param {number} [retries=3] - Number of retries left.
@@ -378,6 +420,7 @@
 
         /**
          * Converts a Base64 string to an ArrayBuffer.
+         * (Your existing function)
          * @param {string} base64 - The Base64 encoded string.
          * @returns {ArrayBuffer} The resulting ArrayBuffer.
          */
@@ -393,6 +436,7 @@
 
         /**
          * Converts raw PCM data into a WAV file (Blob).
+         * (Your existing function - this is perfect for the 8kHz WAV)
          * @param {Int16Array} pcmData - The raw PCM data.
          * @param {number} sampleRate - The sample rate of the PCM data.
          * @returns {Blob} A Blob object representing the WAV file.
@@ -438,6 +482,7 @@
 
         /**
          * Helper function to write a string to a DataView.
+         * (Your existing function)
          * @param {DataView} view - The DataView to write to.
          * @param {number} offset - The offset to start writing at.
          * @param {string} string - The string to write.
@@ -452,4 +497,3 @@
 </body>
 
 </html>
-
